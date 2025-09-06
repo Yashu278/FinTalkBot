@@ -677,7 +677,7 @@ We welcome contributions! Here's how you can help:
 
 ### 📧 Contact
 
-- **GitHub**: [Yashu278](https://github.com/Yashu278/FinTalkBot)
+- **GitHub**: [Yashu278](https://github.com/Yashu278)
 - **Email**: yashdeep278w@gmail.com
 - **LinkedIn**: [Yashdeep Saxena](https://www.linkedin.com/in/yashdeep-saxena-3a6914295/)
 
@@ -692,5 +692,6 @@ We welcome contributions! Here's how you can help:
 [⬆ Back to Top](#-fintalkbot---ai-powered-financial-chatbot)
 
 </div>
+
 
 
