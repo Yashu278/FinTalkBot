@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTalkBot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        #chatbox { 
+            height: 460px; 
+            overflow-y: auto; 
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .user-message {
+            background: #1e88e5;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .bot-message {
+            background: #f5f5f5;
+            color: #333;
+            margin-right: auto;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #userInput { 
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendButton { 
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 80px;
+        }
+
+        #sendButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        #sendButton:active {
+            transform: translateY(0);
+        }
+
+        #sendButton:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            padding: 10px 15px;
+            color: #666;
+            font-style: italic;
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        .mode-toggle {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #555;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill {
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #fafafa;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            body {
+                margin: 10px;
+            }
+            
+            .container {
+                border-radius: 5px;
+            }
+            
+            #chatbox {
+                height: 300px;
+                padding: 15px;
+            }
+            
+            .input-container {
+                padding: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>FinTalkBot 💬</h2>
+            <p>Your AI-powered financial assistant</p>
+        </div>
+
+        <div class="welcome-message">
+            Welcome! Ask me about stock prices or finance news to get started.
+        </div>
+
+        <div id="chatbox">
+            <!-- Chat messages will appear here -->
+        </div>
+
+        <div class="loading" id="loading">
+            Bot is typing...
+        </div>
+
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Ask me about stocks... (e.g., 'What is the price of AAPL?')"
+                maxlength="500"
+                autocomplete="off"
+            >
+            <button id="sendButton" class="pill" onclick="sendMessage()">Send</button>
+            <label class="mode-toggle pill">
+                <input type="checkbox" id="aiModeToggle" /> AI Mode
+            </label>
+        </div>
+    </div>
+
+    <script>
+        // Add enter key support
+        document.getElementById("userInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Auto-scroll to bottom
+        function scrollToBottom() {
+            const chatbox = document.getElementById("chatbox");
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        // Add message to chatbox
+        function addMessage(content, isUser = false) {
+            const chatbox = document.getElementById("chatbox");
+            const messageDiv = document.createElement("div");
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            // Render basic base64 chart tag if present
+            if (typeof content === 'string' && content.includes('data:image/png;base64,')) {
+                const parts = content.split("[chart: ");
+                const text = parts[0].trim();
+                if (text) {
+                    const p = document.createElement('div');
+                    p.textContent = text;
+                    messageDiv.appendChild(p);
+                }
+                const img = document.createElement('img');
+                const b64 = content.substring(content.indexOf('data:image'))
+                .replace(']','').trim();
+                img.src = b64;
+                img.style.maxWidth = '100%';
+                img.style.borderRadius = '6px';
+                img.style.marginTop = '8px';
+                messageDiv.appendChild(img);
+            } else {
+                messageDiv.innerHTML = content;
+            }
+            chatbox.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        // Show/hide loading indicator
+        function toggleLoading(show) {
+            const loading = document.getElementById("loading");
+            const sendButton = document.getElementById("sendButton");
+            
+            loading.style.display = show ? "block" : "none";
+            sendButton.disabled = show;
+            sendButton.textContent = show ? "..." : "Send";
+        }
+
+        // Show error message
+        function showError(message) {
+            const chatbox = document.getElementById("chatbox");
+            const errorDiv = document.createElement("div");
+            errorDiv.className = "error";
+            errorDiv.textContent = `Error: ${message}`;
+            chatbox.appendChild(errorDiv);
+            scrollToBottom();
+        }
+
+        // Main send message function
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const message = input.value.trim();
+            const aiMode = document.getElementById("aiModeToggle").checked;
+            
+            // Validate input
+            if (!message) {
+                return;
+            }
+
+            // Clear input and add user message
+            input.value = "";
+            addMessage(message, true);
+
+            // Show loading
+            toggleLoading(true);
+
+            try {
+                // Send request to backend
+                // Send request to backend
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json" 
+                    },
+                    body: JSON.stringify({ message: message, mode: aiMode ? "ai" : "rule" })
+                });
+
+
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Handle different response formats
+                let botResponse;
+                if (data.response) {
+                    botResponse = data.response;
+                } else if (data.reply) {
+                    botResponse = data.reply;
+                } else if (data.error) {
+                    throw new Error(data.message || data.error);
+                } else {
+                    throw new Error("Invalid response format");
+                }
+
+                // Add bot response
+                addMessage(botResponse);
+
+            } catch (error) {
+                console.error("Error:", error);
+                showError(error.message || "Failed to get response from bot");
+            } finally {
+                // Hide loading
+                toggleLoading(false);
+                
+                // Focus back on input
+                input.focus();
+            }
+        }
+
+        // Initialize the chat
+        window.addEventListener('load', function() {
+            document.getElementById("userInput").focus();
+        });
+    </script>
+</body>
+</html>

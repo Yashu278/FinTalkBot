@@ -1,0 +1,18 @@
+API suggestions
+1. Alpha Vantage
+2. Yfinance
+3. ChatGPT
+
+_________________________
+
+1. Media Upload section
+2. Real-Time Data Support.
+3. I've 1 lakh rupees. I'm a risky investor. Why do you suggest me to allocate this fund to beat nifty50 index.
+
+________________________
+
+Optional
+1. Create a financial report of (comapny name).
+2. Money manager./ Financial Advisor.
+
+________________________
