@@ -677,9 +677,9 @@ We welcome contributions! Here's how you can help:
 
 ### 📧 Contact
 
-- **GitHub**: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
+- **GitHub**: [@YOUR_USERNAME](https://github.com/Yashu278/FinTalkBot)
 - **Email**: your-email@example.com
-- **LinkedIn**: [Your Profile](https://linkedin.com/in/your-profile)
+- **LinkedIn**: [Your Profile](https://www.linkedin.com/in/yashdeep-saxena-3a6914295/)
 
 ---
 
@@ -687,8 +687,9 @@ We welcome contributions! Here's how you can help:
 
 ### 🌟 Star this repository if you found it helpful!
 
-**Made with ❤️ by [Your Name](https://github.com/YOUR_USERNAME)**
+**Made with ❤️ by [Your Name](https://github.com/Yashu278)**
 
 [⬆ Back to Top](#-fintalkbot---ai-powered-financial-chatbot)
 
 </div>
+
